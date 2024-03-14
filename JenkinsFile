@@ -111,7 +111,7 @@ pipeline {
             steps {
                 script {
                     // Execute unit tests
-                    def unitTestResult = sh(script: 'python -m unittest discover -v test', returnStatus: true)
+                    unitTestResult = sh(script: 'python -m unittest discover -v test', returnStatus: true)
                     
                     // If the unit tests fail, mark the build as failed
                     if (unitTestResult != 0) {
