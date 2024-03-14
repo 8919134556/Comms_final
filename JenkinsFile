@@ -111,14 +111,10 @@ pipeline {
             steps {
                 script {
                     // Execute unit tests and generate xUnit test results
-                    sh(script: 'python3 -m unittest discover -v test > test_results.txt', returnStatus: true)
-
-                    // Add a delay to ensure file is fully written
-                    sleep(time: 10, unit: 'SECONDS')
+                    sh(script: 'python3 -m unittest discover -v test > test_results.txt 2>&1', returnStatus: true)
 
                     // Read the file and print its content
                     unitTestResult = readFile('test_results.txt')
-                    echo "Unit Test Result: ${unitTestResult}"
                 }
             }
         }
@@ -128,12 +124,10 @@ pipeline {
                     try {
                         // Approval for Test stage
                         timeout(time: 5, unit: 'MINUTES') {
-                            def attachments = 'test_results.txt'
                             emailext body: emailBodyTest,
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
-                                     mimeType: 'text/html',
-                                     attachmentsPattern: attachments
+                                     mimeType: 'text/html'
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
