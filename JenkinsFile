@@ -3,6 +3,7 @@ def recipientEmailBuild = 'suryaanand456@gmail.com'
 def recipientEmailDeploy = 'suryaanand@infotracktelematics.com'
 def deploymentApprovalURL = "${env.BUILD_URL}input"
 
+def unitTestResult 
 def reviewChangesValue
 def codingStandardsValue
 def adhereToRequirementsValue
