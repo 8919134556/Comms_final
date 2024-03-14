@@ -25,7 +25,7 @@ class HexConverter:
         return ''.join(input_str[i - 2:i] for i in range(len(input_str), 0, -2))
    
     @staticmethod
-    def hex_to_binary(hex_string: str, base: int) -> str:
+    def hex_to_binary(hex_string, base):
         value = bin(int(hex_string, base))[2:]
         binary = format(int(value, 2), '016b')
         return binary
