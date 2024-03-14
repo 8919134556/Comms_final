@@ -125,7 +125,7 @@ pipeline {
                             emailext body: emailBodyTest,
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
-                                     mimeType: 'text/html'
+                                     mimeType: 'text/html',
                                      attachmentsPattern: attachments
 
                             // Waiting for approval input
