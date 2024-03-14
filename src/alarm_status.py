@@ -67,7 +67,8 @@ class AlarmStatus():
 
             return result
         except Exception as e:
-            self.logging.log_data("alarm_status", f"Error processing GPS data: {e}")
+            self.logging.log_data("alarm_status", "Error processing GPS data: {}".format(e))
+
             return None
 
 if __name__ == "__main__":
