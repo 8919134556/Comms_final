@@ -27,7 +27,7 @@ def emailBodyTest = """
             <p>Dear Team,</p>
             <p>Testing of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
             <p>Here are the results of the unit tests:</p>
-            <p>${currentBuild.result}</p>
+            <p>Unit Test Result: ${unitTestResult}</p>
             <p>Please click the following button to approve or reject:</p>
             <p>
                 <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
