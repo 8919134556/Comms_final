@@ -112,7 +112,6 @@ pipeline {
                 script {
                     // Execute unit tests and generate xUnit test results
                     unitTestResult = sh(script: 'python3 -m unittest discover -v test', returnStatus: true)
-                    echo emailBodyTest(unitTestResult)
                 }
             }
         }
@@ -122,7 +121,8 @@ pipeline {
                     try {
                         // Approval for Test stage
                         timeout(time: 5, unit: 'MINUTES') {
-                            emailext body: emailBodyTest(unitTestResult),
+                            def unitTestResultString = unitTestResult.toString()
+                            emailext body: emailBodyTest(unitTestResultString),
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
                                      mimeType: 'text/html'
