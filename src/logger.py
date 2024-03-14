@@ -4,7 +4,7 @@ import configparser
 
 class Logger:
 
-    def __init__(self, config_file_path='./config.ini'):
+    def __init__(self, config_file_path='src/config.ini'):
         self.config = self.load_config(config_file_path)
         self.log_dir_path = self.config.get('Logging', 'LogDirectory')
         self.current_log_folder = None
