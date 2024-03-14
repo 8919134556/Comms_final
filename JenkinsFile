@@ -117,7 +117,7 @@ pipeline {
                     sleep(time: 10, unit: 'SECONDS')
 
                     // Read the file and print its content
-                    def unitTestResult = readFile('test_results.txt')
+                    unitTestResult = readFile('test_results.txt')
                     echo "Unit Test Result: ${unitTestResult}"
                 }
             }
