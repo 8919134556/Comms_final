@@ -1,3 +1,4 @@
+def recipientEmailTest = 'suryaanand456@gmail.com'
 def recipientEmailBuild = 'suryaanand456@gmail.com'
 def recipientEmailDeploy = 'suryaanand@infotracktelematics.com'
 def deploymentApprovalURL = "${env.BUILD_URL}input"
@@ -9,6 +10,28 @@ def adhereToRequirementsValue
 def deployReviewChangesValue
 def deployCodingStandardsValue
 def deployAdhereToRequirementsValue
+
+def emailBodyTest = """
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; font-size: 16px;">
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
+            <h2>Unit Test Results</h2>
+        </div>
+        <div style="padding: 20px;">
+            <p>Dear Team,</p>
+            <p>Here are the results of the unit tests:</p>
+            <p>${currentBuild.result}</p> <!-- Include the unit test results here -->
+            <p>Regards,<br>Your Name</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
 
 def emailBodyBuild = """
 <html>
@@ -74,6 +97,58 @@ pipeline {
                 git branch: 'gps_4040', url: 'https://github.com/8919134556/Comms_final.git'
             }
         }
+        stage('Run Unit Tests') {
+            agent {
+                label 'mdvr'
+                }  
+            steps {
+                script {
+                    // Execute unit tests
+                    def unitTestResult = sh(script: 'python -m unittest discover -v test', returnStatus: true)
+                    
+                    // If the unit tests fail, mark the build as failed
+                    if (unitTestResult != 0) {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+        stage('Test Approval') {
+            steps {
+                script {
+                    try {
+                        // Approval for Test stage
+                        timeout(time: 5, unit: 'MINUTES') {
+                            emailext body: emailBodyTest,
+                                     subject: 'Test Approval Required',
+                                     to: recipientEmailTest,
+                                     mimeType: 'text/html'
+
+                            def testApproval = input message: 'Waiting for Test approval',
+                                                  ok: 'Proceed',
+                                                  submitter: 'test-approver',
+                                                  parameters: [
+                                                      string(defaultValue: '', description: 'Have you thoroughly reviewed the changes incorporated in this Unit test case?', name: 'reviewChanges'),
+                                                      string(defaultValue: '', description: 'Are you confident that all modifications align with the project\'s coding standards and best practices?', name: 'codingStandards'),
+                                                      string(defaultValue: '', description: 'Does the completed build adhere to the specified project requirements and objectives?', name: 'adhereToRequirements')
+                                                  ]
+
+                            // Store parameters
+                            reviewChangesValue = testApproval['reviewChanges']
+                            codingStandardsValue = testApproval['codingStandards']
+                            adhereToRequirementsValue = testApproval['adhereToRequirements']
+
+                            // Log user's responses
+                            echo "Test Approval Responses: ${testApproval}"
+                        }
+                    } catch (err) {
+                        currentBuild.result = 'FAILURE'
+                        echo "An error occurred during the Test approval stage: ${err}"
+                        error "Test approval stage encountered an error. Test will not proceed."
+                    }
+                }
+            }
+        }
 
         stage('Build Approval') {
             steps {
@@ -132,7 +207,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Approval for Deploy stage
+                        // Approval for Deployment stage
                         timeout(time: 5, unit: 'MINUTES') {
                             emailext body: emailBodyDeploy,
                                      subject: 'Deployment Approval Required',
