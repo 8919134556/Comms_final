@@ -110,9 +110,15 @@ pipeline {
             }  
             steps {
                 script {
-                    // Execute unit tests and generate xUnit test results
-                    sh(script: 'python3 -m unittest discover -v test > test_results.txt', returnStatus: true)
+                     def unitTestOutput = sh(script: 'python3 -m unittest discover -v test', returnStdout: true).trim()
+
+                    // Write the output to test_results.txt
+                    writeFile file: 'test_results.txt', text: unitTestOutput
+
+                    // Read the content of test_results.txt
                     unitTestResult = readFile('test_results.txt')
+
+                    // Print the content to verify
                     echo "Unit Test Result: ${unitTestResult}"
                 }
             }
