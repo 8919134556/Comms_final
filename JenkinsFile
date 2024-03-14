@@ -113,6 +113,7 @@ pipeline {
                     // Execute unit tests and generate xUnit test results
                     sh(script: 'python3 -m unittest discover -v test > test_results.txt', returnStatus: true)
                     unitTestResult = readFile('test_results.txt')
+                    echo "Unit Test Result: ${unitTestResult}"
                 }
             }
         }
