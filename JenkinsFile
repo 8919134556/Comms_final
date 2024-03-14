@@ -111,7 +111,7 @@ pipeline {
             steps {
                 script {
                     // Execute unit tests and generate xUnit test results
-                    def unitTestResult = sh(script: 'python -m unittest discover -v test', returnStatus: true)
+                    unitTestResult = sh(script: 'python -m unittest discover -v test', returnStatus: true)
 
                     // Archive xUnit test results
                     step([$class: 'XUnitBuilder', testTimeMargin: '3000', thresholdMode: 1, thresholds: [[$class: 'FailedThreshold', failureNewThreshold: '', failureThreshold: '', unstableNewThreshold: '', unstableThreshold: '']], tools: [[$class: 'PythonTestType', deleteOutputFiles: false, failIfNotNew: false, pattern: '**/nosetests.xml', skipNoTestFiles: false, stopProcessingIfError: true]]])
