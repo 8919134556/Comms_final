@@ -124,10 +124,12 @@ pipeline {
                     try {
                         // Approval for Test stage
                         timeout(time: 5, unit: 'MINUTES') {
+                            def attachments = 'test_results.txt'
                             emailext body: emailBodyTest,
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
-                                     mimeType: 'text/html'
+                                     mimeType: 'text/html',
+                                     attachmentsPattern: attachments
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
