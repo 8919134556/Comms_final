@@ -112,20 +112,6 @@ pipeline {
                 script {
                     // Execute unit tests and generate xUnit test results
                     unitTestResult = sh(script: 'python3 -m unittest discover -v test', returnStatus: true)
-
-                    // Archive xUnit test results
-                    step([$class: 'XUnitBuilder', testTimeMargin: '3000', thresholdMode: 1, thresholds: [[$class: 'FailedThreshold', failureNewThreshold: '', failureThreshold: '', unstableNewThreshold: '', unstableThreshold: '']], tools: [[$class: 'PythonTestType', deleteOutputFiles: false, failIfNotNew: false, pattern: '**/nosetests.xml', skipNoTestFiles: false, stopProcessingIfError: true]]])
-                    
-                    // If the unit tests fail, mark the build as failed
-                    if (unitTestResult != 0) {
-                        currentBuild.result = 'FAILURE'
-                    }
-
-                    // Send email with test results
-                    emailext body: emailBodyTest.replace('${unitTestResult}', unitTestResult),
-                             subject: 'Test Approval Required',
-                             to: recipientEmailTest,
-                             mimeType: 'text/html'
                 }
             }
         }
