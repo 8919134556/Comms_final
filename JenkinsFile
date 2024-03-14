@@ -71,7 +71,7 @@ pipeline {
                 label 'mdvr'
             }
             steps {
-                git branch: 'GPS_4040', url: 'https://github.com/8919134556/MDVR-final.git'
+                git branch: 'gps_4040', url: 'https://github.com/8919134556/Comms_final.git'
             }
         }
 
@@ -118,12 +118,12 @@ pipeline {
             }
             steps {
                 // Build Docker image
-                sh 'docker build -t 9989228601/mdvr-gps_4040:9 .'
+                sh 'docker build -t 9989228601/comms_gps_4040:1 .'
 
                 // Push Docker image to Docker Hub registry
                 withCredentials([usernamePassword(credentialsId: '377e98fd-7ba5-4b8f-a3a2-405f82ade900', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                    sh 'docker push 9989228601/mdvr-gps_4040:9'
+                    sh 'docker push 9989228601/comms_gps_4040:1'
                 }
             }
         }
