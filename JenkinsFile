@@ -107,7 +107,7 @@ pipeline {
         stage('Run Unit Tests') {
             agent {
                 label 'mdvr'
-                }  
+            }  
             steps {
                 script {
                     // Execute unit tests and generate xUnit test results
@@ -126,6 +126,7 @@ pipeline {
                                      to: recipientEmailTest,
                                      mimeType: 'text/html'
 
+                            // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
                                                   ok: 'Proceed',
                                                   submitter: 'test-approver',
@@ -163,6 +164,7 @@ pipeline {
                                      to: recipientEmailBuild,
                                      mimeType: 'text/html'
 
+                            // Waiting for approval input
                             def buildApproval = input message: 'Waiting for build approval',
                                                   ok: 'Proceed',
                                                   submitter: 'build-approver',
@@ -216,6 +218,7 @@ pipeline {
                                      to: recipientEmailDeploy,
                                      mimeType: 'text/html'
 
+                            // Waiting for approval input
                             def deployApproval = input message: 'Waiting for deployment approval',
                                                     ok: 'Proceed',
                                                     submitter: 'deploy-approver',
