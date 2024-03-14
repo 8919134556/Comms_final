@@ -90,14 +90,14 @@ if __name__ == "__main__":
 
     input_str = "Hello, World!"
     hex_result = hex_converter.convert_ascii_to_hex(input_str)
-    print(f"ASCII to HEX: {hex_result}")
+    print("ASCII to HEX: {}".format(hex_result))
 
     data = "1051"
     reversed_result = hex_converter.string_reverse(data)
-    print(f"Reversed HEX: {reversed_result}")
+    print("Reversed HEX: {}".format(reversed_result))
 
     ascii_result = hex_converter.convert_hex_to_ascii(reversed_result)
-    print(f"HEX to ASCII: {ascii_result}")
+    print("HEX to ASCII: {}".format(ascii_result))
 
 
     # Pass values from another code
