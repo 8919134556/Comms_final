@@ -11,6 +11,7 @@ def deployReviewChangesValue
 def deployCodingStandardsValue
 def deployAdhereToRequirementsValue
 
+
 def emailBodyTest = """
 <html>
 <head>
@@ -20,12 +21,18 @@ def emailBodyTest = """
 <body style="font-family: Arial, sans-serif; font-size: 16px;">
     <div style="max-width: 600px; margin: 0 auto;">
         <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
-            <h2>Unit Test Results</h2>
+            <h2>Build Approval Required</h2>
         </div>
         <div style="padding: 20px;">
             <p>Dear Team,</p>
+            <p>Testing of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
             <p>Here are the results of the unit tests:</p>
-            <p>${currentBuild.result}</p> <!-- Include the unit test results here -->
+            <p>${currentBuild.result}</p>
+            <p>Please click the following button to approve or reject:</p>
+            <p>
+                <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
+            </p>
+            <p>Your feedback is important to us. Please provide your comments or suggestions.</p><br>
             <p>Regards,<br>Your Name</p>
         </div>
     </div>
