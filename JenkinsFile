@@ -9,6 +9,7 @@ pipeline {
     }
 
     stages {
+        // Checkout Stage
         stage('Checkout') {
             agent {
                 label 'mdvr'
@@ -17,6 +18,8 @@ pipeline {
                 git branch: 'gps_4040', url: 'https://github.com/8919134556/Comms_final.git'
             }
         }
+
+        // Run Unit Tests Stage
         stage('Run Unit Tests') {
             agent {
                 label 'mdvr'
@@ -28,6 +31,8 @@ pipeline {
                 }
             }
         }
+
+        // Test Approval Stage
         stage('Test Approval') {
             agent {
                 label 'mdvr'
@@ -70,6 +75,7 @@ pipeline {
             }
         }
 
+        // Build Approval Stage
         stage('Build Approval') {
             steps {
                 script {
@@ -108,6 +114,7 @@ pipeline {
             }
         }
 
+        // Build and Push Docker Image Stage
         stage('Build and Push Docker Image') {
             agent {
                 label 'mdvr'
@@ -124,6 +131,7 @@ pipeline {
             }
         }
 
+        // Deployment Approval Stage
         stage('Deployment Approval') {
             steps {
                 script {
@@ -162,6 +170,7 @@ pipeline {
             }
         }
 
+        // Deploy to Kubernetes Staging Stage
         stage('Deploy to Kubernetes Staging') {
             agent {
                 label 'mdvr'
@@ -194,7 +203,7 @@ def generateEmailBody(stageName, testResults) {
     if (stageName == 'Test') {
         emailBody += """
                     <p>Here are the results of the unit tests:</p>
-                    <p>Unit Test Result: ${testResults}</p>
+                    <p>Unit Test Result: below attacted the unit test case result</p>
         """
     }
 
