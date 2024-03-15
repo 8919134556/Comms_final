@@ -25,6 +25,7 @@ pipeline {
                 script {
                     // Execute unit tests and generate xUnit test results
                     sh(script: 'python3 -m unittest discover -v test > test_results.txt 2>&1')
+                    sh 'ls -l' // Print contents of the current directory
                 }
             }
         }
