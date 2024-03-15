@@ -1,99 +1,12 @@
-def recipientEmailTest = 'suryaanand456@gmail.com'
-def recipientEmailBuild = 'suryaanand456@gmail.com'
-def recipientEmailDeploy = 'suryaanand@infotracktelematics.com'
-def deploymentApprovalURL = "${env.BUILD_URL}input"
-
-def unitTestResult 
-def reviewChangesValue
-def codingStandardsValue
-def adhereToRequirementsValue
-
-def deployReviewChangesValue
-def deployCodingStandardsValue
-def deployAdhereToRequirementsValue
-
-def emailBodyTest = """
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: Arial, sans-serif; font-size: 16px;">
-    <div style="max-width: 600px; margin: 0 auto;">
-        <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
-            <h2>Build Approval Required</h2>
-        </div>
-        <div style="padding: 20px;">
-            <p>Dear Team,</p>
-            <p>Testing of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
-            <p>Here are the results of the unit tests:</p>
-            <p>Unit Test Result: ${readFile('test_result.txt')}</p>
-            <p>Please click the following button to approve or reject:</p>
-            <p>
-                <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
-            </p>
-            <p>Your feedback is important to us. Please provide your comments or suggestions.</p><br>
-            <p>Regards,<br>Your Name</p>
-        </div>
-    </div>
-</body>
-</html>
-"""
-
-def emailBodyBuild = """
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: Arial, sans-serif; font-size: 16px;">
-    <div style="max-width: 600px; margin: 0 auto;">
-        <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
-            <h2>Build Approval Required</h2>
-        </div>
-        <div style="padding: 20px;">
-            <p>Dear Team,</p>
-            <p>Build of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
-            <p>Please click the following button to approve or reject:</p>
-            <p>
-                <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
-            </p>
-            <p>Your feedback is important to us. Please provide your comments or suggestions.</p><br>
-            <p>Regards,<br>Your Name</p>
-        </div>
-    </div>
-</body>
-</html>
-"""
-
-def emailBodyDeploy = """
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: Arial, sans-serif; font-size: 16px;">
-    <div style="max-width: 600px; margin: 0 auto;">
-        <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
-            <h2>Deployment Approval Required</h2>
-        </div>
-        <div style="padding: 20px;">
-            <p>Dear Team,</p>
-            <p>Deployment of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
-            <p>Please click the following button to approve or reject:</p>
-            <p>
-                <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
-            </p>
-            <p>Your feedback is important to us. Please provide your comments or suggestions.</p><br>
-            <p>Regards,<br>Your Name</p>
-        </div>
-    </div>
-</body>
-</html>
-"""
-
 pipeline {
     agent any
+
+    environment {
+        recipientEmailTest = 'suryaanand456@gmail.com'
+        recipientEmailBuild = 'suryaanand456@gmail.com'
+        recipientEmailDeploy = 'suryaanand@infotracktelematics.com'
+        deploymentApprovalURL = "${env.BUILD_URL}input"
+    }
 
     stages {
         stage('Checkout') {
@@ -121,7 +34,7 @@ pipeline {
                     try {
                         // Approval for Test stage
                         timeout(time: 5, unit: 'MINUTES') {
-                            emailext body: emailBodyTest,
+                            emailext body: generateEmailBody('Test', readFile('test_results.txt')),
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
                                      mimeType: 'text/html'
@@ -159,7 +72,7 @@ pipeline {
                     try {
                         // Approval for Build stage
                         timeout(time: 5, unit: 'MINUTES') {
-                            emailext body: emailBodyBuild,
+                            emailext body: generateEmailBody('Build', null),
                                      subject: 'Build Approval Required',
                                      to: recipientEmailBuild,
                                      mimeType: 'text/html'
@@ -213,7 +126,7 @@ pipeline {
                     try {
                         // Approval for Deployment stage
                         timeout(time: 5, unit: 'MINUTES') {
-                            emailext body: emailBodyDeploy,
+                            emailext body: generateEmailBody('Deployment', null),
                                      subject: 'Deployment Approval Required',
                                      to: recipientEmailDeploy,
                                      mimeType: 'text/html'
@@ -255,4 +168,44 @@ pipeline {
             }
         }
     }
+}
+
+def generateEmailBody(stageName, testResults) {
+    def emailBody = """
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: Arial, sans-serif; font-size: 16px;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
+                    <h2>${stageName} Approval Required</h2>
+                </div>
+                <div style="padding: 20px;">
+                    <p>Dear Team,</p>
+                    <p>${stageName} of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
+    """
+
+    if (stageName == 'Test') {
+        emailBody += """
+                    <p>Here are the results of the unit tests:</p>
+                    <p>Unit Test Result: ${testResults}</p>
+        """
+    }
+
+    emailBody += """
+                    <p>Please click the following button to approve or reject:</p>
+                    <p>
+                        <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
+                    </p>
+                    <p>Your feedback is important to us. Please provide your comments or suggestions.</p><br>
+                    <p>Regards,<br>Your Name</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    """
+
+    return emailBody
 }
