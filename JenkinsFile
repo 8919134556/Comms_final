@@ -104,16 +104,15 @@ pipeline {
                 git branch: 'gps_4040', url: 'https://github.com/8919134556/Comms_final.git'
             }
         }
-        stage('Run Unit Tests') {
+         stage('Run Unit Tests') {
             agent {
                 label 'mdvr'
             }  
             steps {
                 script {
-                    // Execute unit tests and generate xUnit test results
-                    sh 'python3 -m unittest discover -v test --xunit-xml test_results.xml'
-                    // Archive the test results file
-                    archiveArtifacts 'test_results.xml'
+                    // Execute unit tests and capture results
+                    def testResult = sh(script: 'python3 -m unittest discover -v test', returnStdout: true)
+                    unitTestResult = testResult.trim()
                 }
             }
         }
@@ -127,7 +126,7 @@ pipeline {
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
                                      mimeType: 'text/html',
-                                     attachmentsPattern: 'test_results.xml' // Attach the test results file
+                                     attachmentsPattern: 'test_results.txt', // Attach the test results file
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
