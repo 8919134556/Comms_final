@@ -126,7 +126,7 @@ pipeline {
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
                                      mimeType: 'text/html',
-                                     attachmentsPattern: 'test_results.txt', // Attach the test results file
+                                     attachmentsPattern: 'test_results.txt' // Attach the test results file
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
