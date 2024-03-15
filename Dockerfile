@@ -27,7 +27,7 @@ RUN apt-get update && \
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Create a volume for persistent data
-VOLUME /usr/app/gps_4040/logs
+VOLUME /usr/app/gps_4040/GPS_4040_logs
 
 # Expose port 8011
 EXPOSE 8011
