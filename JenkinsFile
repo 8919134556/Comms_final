@@ -104,28 +104,29 @@ pipeline {
                 git branch: 'gps_4040', url: 'https://github.com/8919134556/Comms_final.git'
             }
         }
-         stage('Run Unit Tests') {
-            agent {
-                label 'mdvr'
-            }  
+        stage('Run Unit Tests') {
             steps {
+                // Run unit tests and generate xUnit test results
                 script {
-                    // Execute unit tests and generate JUnit XML reports
-                    sh 'python3 -m unittest discover -v test --junit-xml test-results.xml'
+                    sh 'python3 -m unittest discover -v test --xunit-xml test_results.xml'
                 }
             }
         }
-        stage('Publish Test Results') {
+         stage('Publish Unit Test Results') {
             steps {
-                // Publish test results using the xUnit plugin
-                xunit(tools: [JUnit(pattern: 'test-results.xml')]) {
-                    // Specify the location of the JUnit XML reports
-                    publishers {
-                        junit {
-                            testResults 'test-results.xml'
-                        }
-                    }
-                }
+                // Publish xUnit test results
+                xunit(
+                    testTimeMargin: '3000', 
+                    thresholdMode: 1, 
+                    thresholds: [
+                        skipped('0'),
+                        failed('0'),
+                        unstable('0')
+                    ],
+                    tools: [
+                        xunitJUnit(pattern: 'test_results.xml')
+                    ]
+                )
             }
         }
         stage('Test Approval') {
@@ -138,7 +139,7 @@ pipeline {
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
                                      mimeType: 'text/html',
-                                     attachmentsPattern: 'test-results.xml' // Attach the test results file
+                                     attachmentsPattern: 'test_results.xml' // Attach the test results file
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
