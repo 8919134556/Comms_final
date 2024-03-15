@@ -112,7 +112,7 @@ pipeline {
                 }
             }
         }
-         stage('Publish Unit Test Results') {
+        stage('Publish Unit Test Results') {
             steps {
                 // Publish xUnit test results
                 xunit(
