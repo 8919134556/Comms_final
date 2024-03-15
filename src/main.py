@@ -7,7 +7,7 @@ from gps_process import GpsDataProcessor
 
 
 class GPSData:
-    def __init__(self, config_file="C:\\suryaanand\\daily-work\\09-03-2024\\MDVR-final\\GPS_1041\\src\\config.ini"):
+    def __init__(self, config_file="src/config.ini"):
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
         self.logging = Logger()

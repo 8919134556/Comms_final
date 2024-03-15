@@ -2,10 +2,12 @@
 FROM python:3.9.9-slim
 
 # Set the working directory in the container
-WORKDIR /usr/src/app
+WORKDIR /usr/app/gps_4040
 
-# Copy the application source code into the container
-COPY src /usr/src/app/
+# Copy the application source code and requirements file into the container
+COPY src /usr/app/gps_4040/src
+COPY test /usr/app/gps_4040/test
+COPY requirements.txt /usr/app/gps_4040
 
 # Install required packages, including the SQL Server ODBC driver
 RUN apt-get update && \
@@ -22,14 +24,13 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY src/requirements.txt /usr/src/app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Create a volume for persistent data
-VOLUME /usr/src/app/logs
+VOLUME /usr/app/gps_4040/logs
 
 # Expose port 8011
 EXPOSE 8011
 
 # Run main.py when the container launches
-CMD ["python3", "./src/main.py"]
+CMD ["python", "./src/main.py"]

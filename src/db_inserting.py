@@ -24,7 +24,7 @@ class DatabaseManager:
         try:
             if self._connection is None:
                 config = ConfigParser()
-                config.read('C:\\suryaanand\\daily-work\\09-03-2024\\MDVR-final\\GPS_1041\\src\\config.ini')  # Adjust the file path as needed
+                config.read('src/config.ini')  # Adjust the file path as needed
                 driver = config.get('Database', 'driver')
                 server = config.get('Database', 'server')
                 database = config.get('Database', 'database')

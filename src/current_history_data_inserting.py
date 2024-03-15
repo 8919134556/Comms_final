@@ -8,7 +8,7 @@ import redis
 import json
 
 class CurrentHistoryInsert:
-    def __init__(self, config_file="C:\\suryaanand\\daily-work\\09-03-2024\\MDVR-final\\GPS_1041\\src\\config.ini"):
+    def __init__(self, config_file="src/config.ini"):
         self.config = configparser.ConfigParser()
         self.database_manager = DatabaseManager()
         self.odometer_calculator = OdometerCalculator()
