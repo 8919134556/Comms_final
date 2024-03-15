@@ -111,9 +111,9 @@ pipeline {
             steps {
                 script {
                     // Execute unit tests and generate xUnit test results
-                    sh(script: 'python3 -m unittest discover -v test > test_results.txt 2>&1')
-                    // Read the file and print its content
-                    unitTestResult = sh(script: 'cat test_results.txt', returnStdout: true).trim()
+                    sh 'python3 -m unittest discover -v test --xunit-xml test_results.xml'
+                    // Archive the test results file
+                    archiveArtifacts 'test_results.xml'
                 }
             }
         }
@@ -127,6 +127,7 @@ pipeline {
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
                                      mimeType: 'text/html',
+                                     attachmentsPattern: 'test_results.xml', // Attach the test results file
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
