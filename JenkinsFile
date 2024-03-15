@@ -27,7 +27,7 @@ def emailBodyTest = """
             <p>Dear Team,</p>
             <p>Testing of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
             <p>Here are the results of the unit tests:</p>
-            <p>Unit Test Result: ${unitTestResult}</p>
+            <p>Unit Test Result: ${readFile('test_result.txt')}</p>
             <p>Please click the following button to approve or reject:</p>
             <p>
                 <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
@@ -105,28 +105,14 @@ pipeline {
             }
         }
         stage('Run Unit Tests') {
+            agent {
+                label 'mdvr'
+            }  
             steps {
-                // Run unit tests and generate xUnit test results
                 script {
-                    sh 'python3 -m unittest discover -v test --xunit-xml test_results.xml'
+                    // Execute unit tests and generate xUnit test results
+                    sh(script: 'python3 -m unittest discover -v test > test_results.txt 2>&1')
                 }
-            }
-        }
-        stage('Publish Unit Test Results') {
-            steps {
-                // Publish xUnit test results
-                xunit(
-                    testTimeMargin: '3000', 
-                    thresholdMode: 1, 
-                    thresholds: [
-                        skipped('0'),
-                        failed('0'),
-                        unstable('0')
-                    ],
-                    tools: [
-                        xunitJUnit(pattern: 'test_results.xml')
-                    ]
-                )
             }
         }
         stage('Test Approval') {
@@ -138,8 +124,7 @@ pipeline {
                             emailext body: emailBodyTest,
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
-                                     mimeType: 'text/html',
-                                     attachmentsPattern: 'test_results.xml' // Attach the test results file
+                                     mimeType: 'text/html'
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
