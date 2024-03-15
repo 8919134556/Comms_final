@@ -118,11 +118,11 @@ pipeline {
         stage('Publish Test Results') {
             steps {
                 // Publish test results using the xUnit plugin
-                xunit(testTimeMargin: '3000', thresholdMode: 1) {
+                xunit(tools: [JUnit(pattern: 'test-results.xml')]) {
                     // Specify the location of the JUnit XML reports
                     publishers {
                         junit {
-                            testResultsPattern 'test-results.xml'
+                            testResults 'test-results.xml'
                         }
                     }
                 }
