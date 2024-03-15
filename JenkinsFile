@@ -31,9 +31,8 @@ pipeline {
                 }
             }
         }
-
         // Test Approval Stage
-        stage('Test Approval') {
+       stage('Test Approval') {
             agent {
                 label 'mdvr'
             }
@@ -43,25 +42,27 @@ pipeline {
                         // Approval for Test stage
                         timeout(time: 5, unit: 'MINUTES') {
                             emailext body: generateEmailBody('Test', null),
-                                     subject: 'Test Approval Required',
-                                     to: recipientEmailTest,
-                                     mimeType: 'text/html',
-                                     attachmentsPattern: 'test_results.txt'
+                                    subject: 'Test Approval Required',
+                                    to: recipientEmailTest,
+                                    mimeType: 'text/html',
+                                    attachmentsPattern: 'test_results.txt'
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
-                                                  ok: 'Proceed',
-                                                  submitter: 'test-approver',
-                                                  parameters: [
-                                                      string(defaultValue: '', description: 'Have you thoroughly reviewed the changes incorporated in this Unit test case?', name: 'reviewChanges'),
-                                                      string(defaultValue: '', description: 'Are you confident that all modifications align with the project\'s coding standards and best practices?', name: 'codingStandards'),
-                                                      string(defaultValue: '', description: 'Does the completed build adhere to the specified project requirements and objectives?', name: 'adhereToRequirements')
-                                                  ]
+                                                ok: 'Proceed',
+                                                submitter: 'test-approver',
+                                                parameters: [
+                                                    string(defaultValue: '', description: 'Did you review the unit test cases thoroughly?', name: 'reviewUnitTestCases'),
+                                                    string(defaultValue: '', description: 'Are you confident that the unit tests cover all necessary scenarios?', name: 'confidenceInTestCoverage'),
+                                                    string(defaultValue: '', description: 'Did you verify that the unit tests align with project requirements?', name: 'verifyTestAlignment'),
+                                                    string(defaultValue: '', description: 'Any additional comments or concerns regarding the unit tests?', name: 'additionalComments')
+                                                ]
 
                             // Store parameters
-                            reviewChangesValue = testApproval['reviewChanges']
-                            codingStandardsValue = testApproval['codingStandards']
-                            adhereToRequirementsValue = testApproval['adhereToRequirements']
+                            reviewUnitTestCasesValue = testApproval['reviewUnitTestCases']
+                            confidenceInTestCoverageValue = testApproval['confidenceInTestCoverage']
+                            verifyTestAlignmentValue = testApproval['verifyTestAlignment']
+                            additionalCommentsValue = testApproval['additionalComments']
 
                             // Log user's responses
                             echo "Test Approval Responses: ${testApproval}"
@@ -74,6 +75,7 @@ pipeline {
                 }
             }
         }
+
 
         // Build Approval Stage
         stage('Build Approval') {
