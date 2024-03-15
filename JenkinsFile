@@ -110,9 +110,21 @@ pipeline {
             }  
             steps {
                 script {
-                    // Execute unit tests and capture results
-                    def testResult = sh(script: 'python3 -m unittest discover -v test', returnStdout: true)
-                    unitTestResult = testResult.trim()
+                    // Execute unit tests and generate JUnit XML reports
+                    sh 'python3 -m unittest discover -v test --junit-xml test-results.xml'
+                }
+            }
+        }
+        stage('Publish Test Results') {
+            steps {
+                // Publish test results using the xUnit plugin
+                xunit(testTimeMargin: '3000', thresholdMode: 1) {
+                    // Specify the location of the JUnit XML reports
+                    publishers {
+                        junit {
+                            testResultsPattern 'test-results.xml'
+                        }
+                    }
                 }
             }
         }
@@ -126,7 +138,7 @@ pipeline {
                                      subject: 'Test Approval Required',
                                      to: recipientEmailTest,
                                      mimeType: 'text/html',
-                                     attachmentsPattern: 'test_results.txt' // Attach the test results file
+                                     attachmentsPattern: 'test-results.xml' // Attach the test results file
 
                             // Waiting for approval input
                             def testApproval = input message: 'Waiting for Test approval',
