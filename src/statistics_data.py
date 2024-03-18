@@ -19,7 +19,8 @@ class StatisticsStatus():
                 result = [total_mileage, current_day_mileage]
                 return result
             else:
-                return None
+                result = [None, None]
+                return result
         except Exception as e:
             self.logging.log_data("static_status", f"Error processing GPS data: {e}")
             return None
