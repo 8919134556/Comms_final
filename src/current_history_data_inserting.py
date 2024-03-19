@@ -64,8 +64,8 @@ class CurrentHistoryInsert:
                 track_time = device_date_time
                 lat = lat
                 lon = lon
-                location = self.address_info.reverse_geocode_and_print_address(lat, lon)
-                location_near_by = self.address_info.get_nearby_locations(lat, lon)
+                location = ""
+                location_near_by = ""
                 road_type = " "
                 ignition = ignition
                 speed = int(speed)

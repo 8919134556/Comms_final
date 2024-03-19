@@ -64,12 +64,12 @@ class HardDisk:
 
 if __name__ == "__main__":
     process_hard_disk = HardDisk()
-    context = "03"
-    hex_context = "00018C0E000000000000010104D7010000000000"
+    context = "01"
+    hex_context = "10010d8e0e0000000000"
     try:
         hard_disk = process_hard_disk.hex_bit_size(context)
         print(hard_disk)
-        result = process_hard_disk.hex_bit_hard_disk(hard_disk, hex_context)
+        result = process_hard_disk.hex_bit_hard_disk(" ", " ")
         if result:
             print(result)
     except Exception as e:
