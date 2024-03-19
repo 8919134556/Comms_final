@@ -126,7 +126,7 @@ class GpsDataProcessor:
             ssid_length = wifi_network[4]
             content_data_pos = content_data_pos+30
             SSID_length = ssid_length * 2
-            SSID_bit = bit_data[content_data_pos : content_data_pos + SSID_length]
+            SSID_bit = hex_data[content_data_pos : content_data_pos + SSID_length]
             SSID = self.hex_converter.convert_hex_to_ascii(SSID_bit)
             content_data_pos = content_data_pos + SSID_length
         else:
@@ -136,13 +136,11 @@ class GpsDataProcessor:
         if status_context_bit[7:8] == "1":
             position = 0
             hard_disk_status_bit_identifier = self.hard_disk.hex_bit_size(hex_data[content_data_pos:content_data_pos+2]) # 0110010d8e0e0000000000, bit length is 22
-            print(hard_disk_status_bit_identifier)
             content_data_pos = content_data_pos+2
             for i in range(len(hard_disk_status_bit_identifier)):
                 if hard_disk_status_bit_identifier[i] == '1':
                     position += 20
             con = hex_data[content_data_pos : content_data_pos+position]
-            print(con)
             hard_disk_status_data = self.hard_disk.hex_bit_hard_disk(hard_disk_status_bit_identifier, con)
             content_data_pos = content_data_pos+position
         else:
@@ -177,7 +175,7 @@ class GpsDataProcessor:
             i_button_bit_identifier = hex_data[content_data_pos:content_data_pos+4] # I-button info: data not exist, so no data here. and bit length is 4 and N of bits
             i_button = self.i_button.hex_bit_i_button(i_button_bit_identifier)
             i_button_length = i_button[0]
-            i_button_bit = bit_data[content_data_pos : content_data_pos + i_button_length]
+            i_button_bit = hex_data[content_data_pos : content_data_pos + i_button_length]
             i_button_number = self.hex_converter.convert_hex_to_ascii(i_button_bit)
             content_data_pos = content_data_pos + i_button_length
         else:
