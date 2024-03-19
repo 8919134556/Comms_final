@@ -125,7 +125,7 @@ class GpsDataProcessor:
             wifi_network =  self.wifi_network.hex_bit_wifi_network(wifi_network_status_bit_identifier)
             ssid_length = wifi_network[4]
             content_data_pos = content_data_pos+30
-            SSID_length = ssid_length
+            SSID_length = ssid_length * 2
             SSID_bit = bit_data[content_data_pos : content_data_pos + SSID_length]
             SSID = self.hex_converter.convert_hex_to_ascii(SSID_bit)
             content_data_pos = content_data_pos + SSID_length
@@ -134,9 +134,15 @@ class GpsDataProcessor:
         
         # hard disk status
         if status_context_bit[7:8] == "1":
-            hard_disk_status_bit_identifier = hex_data[content_data_pos:content_data_pos+22] # 0110010d8e0e0000000000, bit length is 22
-            hard_disk_status_data = self.hard_disk.hex_bit_hard_disk(hard_disk_status_bit_identifier)
-            content_data_pos = content_data_pos+22
+            position = 0
+            hard_disk_status_bit_identifier = self.hard_disk.hex_bit_size(hex_data[content_data_pos:content_data_pos+2]) # 0110010d8e0e0000000000, bit length is 22
+            content_data_pos = content_data_pos+2
+            for i in range(len(hard_disk_status_bit_identifier)):
+                if hard_disk_status_bit_identifier[i] == '1':
+                    position += 20
+            con = hex_data[content_data_pos : content_data_pos+position]
+            hard_disk_status_data = self.hard_disk.hex_bit_hard_disk(hard_disk_status_bit_identifier, con)
+            content_data_pos = content_data_pos+position
         else:
             hard_disk_status_data = [None, None, None, None]
 

@@ -35,15 +35,33 @@ class WifiNetwork():
 
             # Check if network address data is valid and extract the value
             if network_address_data_valid == "1":
-                network_address = int(self.hex_converter.string_reverse(context[4:12]), 16)
+                # Extracting bytes and converting them to integers
+                byte1 = int(self.hex_converter.string_reverse(context[4:6]), 16)
+                byte2 = int(self.hex_converter.string_reverse(context[6:8]), 16)
+                byte3 = int(self.hex_converter.string_reverse(context[8:10]), 16)
+                byte4 = int(self.hex_converter.string_reverse(context[10:12]), 16)
+                # Concatenating the bytes into an IPv4 address format
+                network_address = f"{byte1}.{byte2}.{byte3}.{byte4}"
 
             # Check if gateway data is valid and extract the value
             if gateway_data_valid == "1":
-                gateway = int(self.hex_converter.string_reverse(context[12:20]), 16)
+                # Extracting bytes and converting them to integers
+                gateway_byte1 = int(self.hex_converter.string_reverse(context[12:14]), 16)
+                gateway_byte2 = int(self.hex_converter.string_reverse(context[14:16]), 16)
+                gateway_byte3 = int(self.hex_converter.string_reverse(context[16:18]), 16)
+                gateway_byte4 = int(self.hex_converter.string_reverse(context[18:20]), 16)
+                # Concatenating the bytes into an Gate way address format
+                gateway = f"{gateway_byte1}.{gateway_byte2}.{gateway_byte3}.{gateway_byte4}"
 
             # Check if subnet mask data is valid and extract the value
             if subnet_mask_data_valid == "1":
-                subnet_mask = int(self.hex_converter.string_reverse(context[20:28]), 16)
+                # Extracting bytes and converting them to integers
+                subnet_byte1 = int(self.hex_converter.string_reverse(context[12:14]), 16)
+                subnet_byte2 = int(self.hex_converter.string_reverse(context[14:16]), 16)
+                subnet_byte3 = int(self.hex_converter.string_reverse(context[16:18]), 16)
+                subnet_byte4 = int(self.hex_converter.string_reverse(context[18:20]), 16)
+                # Concatenating the bytes into an sub net way address format
+                subnet_mask = f"{subnet_byte1}.{subnet_byte2}.{subnet_byte3}.{subnet_byte4}"
 
             # Check if SSID/SSID length data is valid and extract the value
             if ssid_length_data_valid == "1":
@@ -62,7 +80,7 @@ if __name__ == "__main__":
     process_wifi_network = WifiNetwork()
 
     # Sample context with zeros, you may want to change this based on your requirements
-    context = "000000000000000000000000000000"
+    context = "1f040000000000000000000000000100"
 
     # Call the hex_bit_wifi_network method within a try-except block and print the result
     try:
