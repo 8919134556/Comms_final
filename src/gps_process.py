@@ -302,23 +302,47 @@ class GpsDataProcessor:
         driver_id = driver[0]
         driver_name = driver[1]
         bluetooth_status = bluetooth_status
-        panic = None
-        fuel_bar = None
-        over_speed = None
-        seat_belt = None
-        previous_value = None
         ec = None
-        tp = None
-        alert_datetime = None
-        dt = None
+        alarm_st = None
+        alarm_et = None
+        ch = None
+        seat_belt = None
+        fuel_bar = None
+        panic = None
+        max_value = None
+        min_value = None
+        average_value = None
+        current_value = None
+        previous_value = None
+        over_speed = None
+        parking_time = None
+        status = None
+        oil_tank_capacity = None
+        balance_fuel_capacity = None
+        swipe_card_type = None
+        swipe_card_info = None
+        DriverOrStudent_status = None
+        his_real_data = None
+        card_type = None
+        Dw0 = None
+        Dw1 = None
+        Dw2 = None
+        Dw3 = None
         Up0 = None
-        Dw0 = None 
-        Up1 = None 
-        Dw1 = None 
-        tm = None 
-        Va = None 
-        Cur = None 
+        Up1 = None
+        Up2 = None
+        Up3 = None
         Pat = None
+        cur_peo_bus = None
+        total_weight = None
+        cargo_weight = None
+        disk_name = None
+        file_name = None
+        duration = None
+        slat = None
+        slong = None
+        mile= None
+
 
         result.append((unit_no,unit_no, messageType, polling_mode, version, device_Network_Type,device_date_time,location_type,acquisition_time,
                        direction_in_degree,satellite,speed,altitude,positioning_accuracy, lat, lon, x_acceleration, y_acceleration, z_acceleration,
@@ -330,7 +354,10 @@ class GpsDataProcessor:
                        total_mileage, current_day_mileage, i_button_number,accumulated_mileage, cumulative_fuel_consumption, instant_fuel_consumption,
                        vehicle_voltage, engine_speed, obd_speed, intake_air_flow, intake_pressure, coolant_temperature, intake_air_temperature,
                        engine_load, throttle_position, remaining_oil, engine_status, engine_on_time, engineOffTime, idling_status, hc, ha, hb, low_Battery_voltage, voltage, driver_id, driver_name, bluetooth_status,
-                       ec, alert_datetime, panic, fuel_bar, over_speed, seat_belt, previous_value, tp, dt, Up0, Dw0, Up1, Dw1, tm, Va, Cur, Pat))
+                       
+                       ec,alarm_st, alarm_et,ch,seat_belt, fuel_bar, panic,max_value, min_value, average_value,current_value,previous_value, over_speed, parking_time,status,oil_tank_capacity,
+                       balance_fuel_capacity, swipe_card_type, swipe_card_info, DriverOrStudent_status,his_real_data, card_type,Dw0, Dw1, Dw2, Dw3, Up0, Up1,
+                       Up2, Up3, Pat, cur_peo_bus, total_weight, cargo_weight, disk_name, file_name, duration, slat, slong, mile))
         
         try:
             self.database_manager.insert_records(result)
