@@ -32,5 +32,5 @@ VOLUME /usr/app/alarm_4050/Alarm_4050_logs
 # Expose port 8012
 EXPOSE 8012
 
-# Run alarm_processor.py when the container launches
+# Run main.py when the container launches
 CMD ["python", "./src/main.py"]
