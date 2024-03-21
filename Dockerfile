@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM python:3.9.9-slim
 
 # Set the working directory in the container
 WORKDIR /usr/app/alarm_4050
@@ -9,25 +9,18 @@ COPY src /usr/app/alarm_4050/src
 COPY test /usr/app/alarm_4050/test
 COPY requirements.txt /usr/app/alarm_4050
 
-# Install required packages, including the SQL Server ODBC driver and gnupg
+# Install required packages, including the SQL Server ODBC driver
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         unixodbc \
         unixodbc-dev \
         curl \
         gnupg && \
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Add Microsoft package repository for msodbcsql17
-RUN curl -fsSL https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
-
-# Update package lists again and install msodbcsql17
-RUN apt-get update && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
     ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
         msodbcsql17 && \
-    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
