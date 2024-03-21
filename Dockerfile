@@ -21,9 +21,12 @@ RUN apt-get update && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
         msodbcsql17 && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Create a volume for persistent data
