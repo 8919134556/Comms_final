@@ -9,24 +9,28 @@ COPY src /usr/app/alarm_4050/src
 COPY test /usr/app/alarm_4050/test
 COPY requirements.txt /usr/app/alarm_4050
 
-# Install required packages, including the SQL Server ODBC driver
+# Install required packages, including the SQL Server ODBC driver and gnupg
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         unixodbc \
         unixodbc-dev \
         curl \
         gnupg && \
-    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
-    apt-get update && \
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add Microsoft package repository for msodbcsql17
+RUN curl -fsSL https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
+
+# Update package lists again and install msodbcsql17
+RUN apt-get update && \
     ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
         msodbcsql17 && \
-    rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Create a volume for persistent data
