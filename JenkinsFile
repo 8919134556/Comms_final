@@ -15,7 +15,7 @@ pipeline {
                 label 'mdvr'
             }
             steps {
-                git branch: 'alarm_4040', url: 'https://github.com/8919134556/Comms_final.git'
+                git branch: 'alarm_4050', url: 'https://github.com/8919134556/Comms_final.git'
             }
         }
 
