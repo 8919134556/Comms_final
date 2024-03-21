@@ -1,0 +1,228 @@
+pipeline {
+    agent any
+
+    environment {
+        recipientEmailTest = 'suryaanand456@gmail.com'
+        recipientEmailBuild = 'suryaanand456@gmail.com'
+        recipientEmailDeploy = 'suryaanand@infotracktelematics.com'
+        deploymentApprovalURL = "${env.BUILD_URL}input"
+    }
+
+    stages {
+        // Checkout Stage
+        stage('Checkout') {
+            agent {
+                label 'mdvr'
+            }
+            steps {
+                git branch: 'alarm_4040', url: 'https://github.com/8919134556/Comms_final.git'
+            }
+        }
+
+        // Run Unit Tests Stage
+        stage('Run Unit Tests') {
+            agent {
+                label 'mdvr'
+            }  
+            steps {
+                script {
+                    // Execute unit tests and generate xUnit test results
+                    sh(script: 'python3 -m unittest discover -v test/test_gps > test_results.txt 2>&1')
+                    sh(script: 'python3 -m unittest discover -v test/test_event_type > test_results.txt 2>&1')
+                }
+            }
+        }
+        // Test Approval Stage
+       stage('Test Approval') {
+            agent {
+                label 'mdvr'
+            }
+            steps {
+                script {
+                    try {
+                        // Approval for Test stage
+                        timeout(time: 5, unit: 'MINUTES') {
+                            emailext body: generateEmailBody('Test', null),
+                                    subject: 'Test Approval Required',
+                                    to: recipientEmailTest,
+                                    mimeType: 'text/html',
+                                    attachmentsPattern: 'test_results.txt'
+
+                            // Waiting for approval input
+                            def testApproval = input message: 'Waiting for Test approval',
+                                                ok: 'Proceed',
+                                                submitter: 'test-approver',
+                                                parameters: [
+                                                    string(defaultValue: '', description: 'Did you review the unit test cases thoroughly?', name: 'reviewUnitTestCases'),
+                                                    string(defaultValue: '', description: 'Are you confident that the unit tests cover all necessary scenarios?', name: 'confidenceInTestCoverage'),
+                                                    string(defaultValue: '', description: 'Did you verify that the unit tests align with project requirements?', name: 'verifyTestAlignment'),
+                                                    string(defaultValue: '', description: 'Any additional comments or concerns regarding the unit tests?', name: 'additionalComments')
+                                                ]
+
+                            // Store parameters
+                            reviewUnitTestCasesValue = testApproval['reviewUnitTestCases']
+                            confidenceInTestCoverageValue = testApproval['confidenceInTestCoverage']
+                            verifyTestAlignmentValue = testApproval['verifyTestAlignment']
+                            additionalCommentsValue = testApproval['additionalComments']
+
+                            // Log user's responses
+                            echo "Test Approval Responses: ${testApproval}"
+                        }
+                    } catch (err) {
+                        currentBuild.result = 'FAILURE'
+                        echo "An error occurred during the Test approval stage: ${err}"
+                        error "Test approval stage encountered an error. Test will not proceed."
+                    }
+                }
+            }
+        }
+
+
+        // Build Approval Stage
+        stage('Build Approval') {
+            steps {
+                script {
+                    try {
+                        // Approval for Build stage
+                        timeout(time: 5, unit: 'MINUTES') {
+                            emailext body: generateEmailBody('Build', null),
+                                     subject: 'Build Approval Required',
+                                     to: recipientEmailBuild,
+                                     mimeType: 'text/html'
+
+                            // Waiting for approval input
+                            def buildApproval = input message: 'Waiting for build approval',
+                                                  ok: 'Proceed',
+                                                  submitter: 'build-approver',
+                                                  parameters: [
+                                                      string(defaultValue: '', description: 'Have you thoroughly reviewed the changes incorporated in this build?', name: 'reviewChanges'),
+                                                      string(defaultValue: '', description: 'Are you confident that all modifications align with the project\'s coding standards and best practices?', name: 'codingStandards'),
+                                                      string(defaultValue: '', description: 'Does the completed build adhere to the specified project requirements and objectives?', name: 'adhereToRequirements')
+                                                  ]
+
+                            // Store parameters
+                            reviewChangesValue = buildApproval['reviewChanges']
+                            codingStandardsValue = buildApproval['codingStandards']
+                            adhereToRequirementsValue = buildApproval['adhereToRequirements']
+
+                            // Log user's responses
+                            echo "Build Approval Responses: ${buildApproval}"
+                        }
+                    } catch (err) {
+                        currentBuild.result = 'FAILURE'
+                        echo "An error occurred during the build approval stage: ${err}"
+                        error "Build approval stage encountered an error. Build will not proceed."
+                    }
+                }
+            }
+        }
+
+        // Build and Push Docker Image Stage
+        stage('Build and Push Docker Image') {
+            agent {
+                label 'mdvr'
+            }
+            steps {
+                // Build Docker image
+                sh 'docker build -t 9989228601/comms_alarm_4050:1 .'
+
+                // Push Docker image to Docker Hub registry
+                withCredentials([usernamePassword(credentialsId: '377e98fd-7ba5-4b8f-a3a2-405f82ade900', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                    sh 'docker push 9989228601/comms_alarm_4050:1'
+                }
+            }
+        }
+
+        // Deployment Approval Stage
+        stage('Deployment Approval') {
+            steps {
+                script {
+                    try {
+                        // Approval for Deployment stage
+                        timeout(time: 5, unit: 'MINUTES') {
+                            emailext body: generateEmailBody('Deployment', null),
+                                     subject: 'Deployment Approval Required',
+                                     to: recipientEmailDeploy,
+                                     mimeType: 'text/html'
+
+                            // Waiting for approval input
+                            def deployApproval = input message: 'Waiting for deployment approval',
+                                                    ok: 'Proceed',
+                                                    submitter: 'deploy-approver',
+                                                    parameters: [
+                                                        string(defaultValue: '', description: 'Have you thoroughly reviewed the changes incorporated in this deployment?', name: 'reviewChanges'),
+                                                        string(defaultValue: '', description: 'Are you confident that all modifications align with the project\'s coding standards and best practices?', name: 'codingStandards'),
+                                                        string(defaultValue: '', description: 'Does the completed deployment adhere to the specified project requirements and objectives?', name: 'adhereToRequirements')
+                                                    ]
+
+                            // Store parameters
+                            deployReviewChangesValue = deployApproval['reviewChanges']
+                            deployCodingStandardsValue = deployApproval['codingStandards']
+                            deployAdhereToRequirementsValue = deployApproval['adhereToRequirements']
+
+                            // Log user's responses
+                            echo "Deploy Approval Responses: ${deployApproval}"
+                        }
+                    } catch (err) {
+                        currentBuild.result = 'FAILURE'
+                        echo "An error occurred during the deployment approval stage: ${err}"
+                        error "Deployment approval stage encountered an error. Deployment will not proceed."
+                    }
+                }
+            }
+        }
+
+        // Deploy to Kubernetes Staging Stage
+        stage('Deploy to Kubernetes Staging') {
+            agent {
+                label 'mdvr'
+            }
+           
+            steps {
+                // Apply Kubernetes manifests to staging environment
+                sh 'kubectl apply -f deployment.yaml'
+            }
+        }
+    }
+}
+
+def generateEmailBody(stageName, testResults) {
+    def emailBody = """
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: Arial, sans-serif; font-size: 16px;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div style="background-color: #007bff; color: #fff; padding: 20px; text-align: center;">
+                    <h2>${stageName} Approval Required</h2>
+                </div>
+                <div style="padding: 20px;">
+                    <p>Dear Team,</p>
+                    <p>${stageName} of project <strong>${JOB_NAME}</strong> (build number ${BUILD_NUMBER}) requires your approval.</p>
+    """
+
+    if (stageName == 'Test') {
+        emailBody += """
+                    <p>Here are the results of the unit tests:</p>
+                    <p>Unit Test Result: below attacted the unit test case result</p>
+        """
+    }
+
+    emailBody += """
+                    <p>Please click the following button to approve or reject:</p>
+                    <p>
+                        <a style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;" href="${deploymentApprovalURL}">Approve / Reject</a>
+                    </p>
+                    <p>Your feedback is important to us. Please provide your comments or suggestions.</p><br>
+                    <p>Regards,<br>Your Name</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    """
+
+    return emailBody
+}
