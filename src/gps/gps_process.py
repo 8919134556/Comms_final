@@ -155,8 +155,8 @@ class GpsDataProcessor:
         # i-button
         if status_context_bit[11:12] == "1":
             i_button_bit_identifier = hex_data[content_data_pos:content_data_pos+4] # I-button info: data not exist, so no data here. and bit length is 4 and N of bits
-            i_button = self.i_button.hex_bit_i_button(i_button_bit_identifier)
-            i_button_length = i_button[0]
+            i_button_length = self.i_button.hex_bit_i_button(i_button_bit_identifier)
+            content_data_pos = content_data_pos+4
             i_button_bit = hex_data[content_data_pos : content_data_pos + i_button_length]
             i_button_number = self.hex_converter.convert_hex_to_ascii(i_button_bit)
             content_data_pos = content_data_pos + i_button_length
@@ -299,6 +299,6 @@ class GpsDataProcessor:
 
 if __name__=="__main__":
     process_data = GpsDataProcessor()
-    bit_data = "170B01070D1CEF070101170B01070D1CA70900001800080087E763030021B33506000700000600000000000600010000001F0003010101030000000000001F0400000000000000000000000001000300018C0E000000000000010104D70100000000000F0000000F000000000000003F000000000000000000000001008A7B090000000000"
+    bit_data = "1803160c0f30af0f00011803160c0f309e08190090030a004d064005000c051a090007ffff0000000000000100010000001f000101000107000006050000010001eaed0000000000000f00000008000000000000003f000000000000000000000001001e0000000000000002113031453934423143303130303030394100"
     result = process_data.process_gps_service_data(bit_data) 
     print(result)

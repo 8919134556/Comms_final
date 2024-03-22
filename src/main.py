@@ -55,7 +55,7 @@ class AlarmProcessor:
                     content_hex = load_data[(ss_no_len * 2) + 10:(ss_no_len * 2) + 10 + (content_len * 2)]
                     try:
                         alarm_process = self.alarm_process_data.alarm_process_service_data(unit_no,content_hex,bit_data,messageType,version,device_Network_Type)
-                        message = f"{datetime.now()} - Unit: {unit_no}, Hex Data: {load_data}"
+                        message = f"{datetime.now()} - Unit: {unit_no}, Hex Data: {hex_data}"
                         self.logging.log_data("1051", message)
                     except Exception as e:
                         message = f"{datetime.now()} - Unit: {unit_no}, Exception : {e}"
