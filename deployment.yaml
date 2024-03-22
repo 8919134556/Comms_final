@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
       - name: mdvr-alarm-container
-        image: 9989228601/comms_alarm_4050:6
+        image: 9989228601/comms_alarm_4050:7
         volumeMounts:
         - name: logs-volume
           mountPath: /usr/app/alarm_4050/Alarm_4050_logs
