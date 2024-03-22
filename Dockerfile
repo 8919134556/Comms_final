@@ -29,8 +29,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Create a volume for persistent data
 VOLUME /usr/app/alarm_4050/Alarm_4050_logs
 
-# Expose port 8012
-EXPOSE 8012
+# Expose port 8013
+EXPOSE 8013
 
 # Run main.py when the container launches
 CMD ["python", "./src/main.py"]
