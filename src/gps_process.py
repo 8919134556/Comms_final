@@ -173,8 +173,8 @@ class GpsDataProcessor:
         # i-button
         if status_context_bit[11:12] == "1":
             i_button_bit_identifier = hex_data[content_data_pos:content_data_pos+4] # I-button info: data not exist, so no data here. and bit length is 4 and N of bits
-            i_button = self.i_button.hex_bit_i_button(i_button_bit_identifier)
-            i_button_length = i_button[0]
+            i_button_length = self.i_button.hex_bit_i_button(i_button_bit_identifier)
+            content_data_pos = content_data_pos+4
             i_button_bit = hex_data[content_data_pos : content_data_pos + i_button_length]
             i_button_number = self.hex_converter.convert_hex_to_ascii(i_button_bit)
             content_data_pos = content_data_pos + i_button_length
@@ -355,14 +355,14 @@ class GpsDataProcessor:
                        vehicle_voltage, engine_speed, obd_speed, intake_air_flow, intake_pressure, coolant_temperature, intake_air_temperature,
                        engine_load, throttle_position, remaining_oil, engine_status, engine_on_time, engineOffTime, idling_status, hc, ha, hb, low_Battery_voltage, voltage, driver_id, driver_name, bluetooth_status,
                        
-                       ec,alarm_st, alarm_et,ch,seat_belt, fuel_bar, panic,max_value, min_value, average_value,current_value,previous_value, over_speed, parking_time,status,oil_tank_capacity,
+                       alarm_st, alarm_et,ch,seat_belt, fuel_bar, panic,max_value, min_value, average_value,current_value,previous_value, over_speed, parking_time,status,oil_tank_capacity,
                        balance_fuel_capacity, swipe_card_type, swipe_card_info, DriverOrStudent_status,his_real_data, card_type,Dw0, Dw1, Dw2, Dw3, Up0, Up1,
-                       Up2, Up3, Pat, cur_peo_bus, total_weight, cargo_weight, disk_name, file_name, duration, slat, slong, mile))
+                       Up2, Up3, Pat, cur_peo_bus, total_weight, cargo_weight, disk_name, file_name, duration, slat, slong, mile, ec))
         
         try:
             self.database_manager.insert_records(result)
         except Exception as e:
-            self.logging.log_data("gps_inserting_error", f'Error While getting into insert record: {str(e)}')
+            self.logging.log_data("alarm_inserting_error", f'Error While getting into insert record: {str(e)}')
         
         try:
             self.current_history_insert.current_history_inserting(unit_no, lat, lon, device_date_time, driver_id, polling_mode, ignition, speed,direction_in_degree, gps_module, voltage)
@@ -377,6 +377,6 @@ if __name__=="__main__":
     messageType = "1041"
     polling_mode = "Testing"
     version = "V1"
-    bit_data = "48014110e10000002561376161626462362d643433612d343737362d616661652d36626437663461373832666300170209092604aff70000170209092604750300009b00170071c1a90800169f1c05000700000000000000000000010000001f00000103010b0000000000000110010d8e0e00000000000f00000006000000000000003f000000000000000000000001009efb010000000000012c000000000000000000000000000000000000000000000000000000002302081542590000000000000000000000020200e204000017323333333333333334343434343434352c626c61636b000100"
+    bit_data = "48014110e10000002561376161626462362d643433612d343737362d616661652d366264376634613738326663001803160c0f30af0f00011803160c0f309e08190090030a004d064005000c051a090007ffff0000000000000100010000001f000101000107000006050000010001eaed0000000000000f00000008000000000000003f000000000000000000000001001e0000000000000002113031453934423143303130303030394100"
     device_Network_Type = "4G" 
     process_data.process_gps_service_data(unit_no, messageType, polling_mode, bit_data, version, device_Network_Type) 

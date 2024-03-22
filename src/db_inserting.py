@@ -60,13 +60,13 @@ class DatabaseManager:
                     @vehicle_voltage = ?, @engine_speed = ?, @obd_speed = ?, @intake_air_flow = ?, @intake_pressure = ?, @coolant_temperature = ?,
                     @intake_air_temperature = ?, @engine_load = ?, @throttle_position = ?, @remaining_oil = ?, @engine_status = ?, @engine_on_time = ?,
                     @engineOffTime = ?, @idling_status = ?, @hc = ?, @ha = ?,@hb = ?, @low_Battery_voltage = ?, @voltage = ?, @driver_id = ?, @driver_name = ?,
-                    @bluetooth_status = ?, @ec = ?, @st = ?, @et = ?, @ch = ?, @seat_belt = ?, @fuel_bar = ?, @panic = ?,
+                    @bluetooth_status = ?,  @st = ?, @et = ?, @ch = ?, @seat_belt = ?, @fuel_bar = ?, @panic = ?,
                     @max_value = ?, @min_value = ?, @average_value = ?, @current_value = ?, @previous_value = ?, @over_speed = ?,
                     @parking_time = ?, @status = ?, @oil_tank_capacity = ?, @balance_fuel_capacity = ?, @swipe_card_type = ?,
                     @swipe_card_info = ?, @DriverOrStudent_status = ?, @his_real_data = ?, @card_type = ?, @Dw0 = ?,
                     @Dw1 = ?, @Dw2 = ?, @Dw3 = ?, @Up0 = ?, @Up1 = ?, @Up2 = ?, @Up3 = ?, @Pat = ?, @cur_peo_bus = ?,
                     @total_weight = ?, @cargo_weight = ?, @disk_name = ?, @file_name = ?, @duration = ?, @slat = ?,
-                    @slong = ?, @mile = ?;'''
+                    @slong = ?, @mile = ?, @ec = ?;'''
 
         try:
             # Using executemany for bulk insertion
@@ -156,9 +156,6 @@ class DatabaseManager:
             self.logging.log_data("DB_connection_error", f"Error executing SQL query at get address records: {e}")
     
     def insert_address(self, lat, lon, location):
-        print("DB",lat)
-        print(lon)
-        print(location)
         query = '''EXEC InsLocation @pLat = ?, @pLon = ?, @Location = ?'''
         try:
             # Using execute for a single set of parameters
