@@ -36,11 +36,11 @@ class AlarmDataProcessor:
         try:
             event_type_result = self.event_type_process.process_event(json_hex_data)
         except Exception as e:
-            print(e)
+            self.logging.log_data("alarm_process_error", f'Error While getting into event_type error: {str(e)}')
         try:
             gps_result = self.gps_process.process_gps_service_data(gps_hex_data)
         except Exception as e:
-            print(e)
+            self.logging.log_data("alarm_gps_process_error", f'Error While getting into gps_result error: {str(e)}')
     
         unit_no
         unit_no
