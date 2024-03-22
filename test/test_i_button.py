@@ -7,8 +7,8 @@ class TestIButton(unittest.TestCase):
         self.i_button_processor = IButton()
 
     def test_valid_input(self):
-        context = "0000"
-        expected_result = [0]
+        context = "0211"
+        expected_result = 34
         result = self.i_button_processor.hex_bit_i_button(context)
         self.assertEqual(result, expected_result)
 
