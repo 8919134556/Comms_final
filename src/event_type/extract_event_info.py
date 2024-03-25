@@ -119,6 +119,7 @@ class ExtractEventInfo:
             history = alarm_description.get('ht', '')
             data = "Historical data" if history == "1" else "Realtime data" if history == "2" else "invalid"
             it = alarm_description.get('it', '')
+            swipe_card_info = alarm_description.get('cn', '')
             card_type_mapping = {"0": "RF_ID", "1": "i-button", "2": "face_recognition", "3": "i-button+face_recognition"}
             card_type = card_type_mapping.get(it, "")
             polling_mode = f"swipe card {'start' if not end_time else 'end'}"
