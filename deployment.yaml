@@ -8,7 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/home/msstag/Alarm_logs"
+    path: "/home/mcdev/Alarm_logs"
   persistentVolumeReclaimPolicy: Retain
 
 ---
@@ -40,6 +40,15 @@ spec:
       labels:
         app: mdvr-alarm
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: storage
+                operator: In
+                values:
+                - available
       containers:
       - name: mdvr-alarm-container
         image: 9989228601/comms_alarm_4050:9
@@ -73,6 +82,40 @@ spec:
       port: 8013  # Example port number, replace with your actual port
       targetPort: 8013  # Example target port, replace with your actual target port
 
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mdvr-alarm-deployment
+#   namespace: mdvr-stag
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: mdvr-alarm
+#   template:
+#     metadata:
+#       labels:
+#         app: mdvr-alarm
+#     spec:
+#       containers:
+#       - name: mdvr-alarm-container
+#         image: 9989228601/comms_alarm_4050:9
+#         volumeMounts:
+#         - name: logs-volume
+#           mountPath: /usr/app/alarm_4050/Alarm_4050_logs
+#       volumes:
+#       - name: logs-volume
+#         persistentVolumeClaim:
+#           claimName: alarm-logs-pvc
+#   strategy:
+#     type: RollingUpdate
+#     rollingUpdate:
+#       maxSurge: 1
+#       maxUnavailable: 0
+#   minReadySeconds: 30
+#   revisionHistoryLimit: 3
 
 
 # ---

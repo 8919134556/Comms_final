@@ -51,7 +51,7 @@ class ExtractEventInfo:
         elif event_type == "4":
             polling_mode, fuel_bar, seat_belt = self.get_input_trigger_mode(alarm_description)
         elif event_type == "5":
-            polling_mode = "panic {'start' if not end_time else 'end'}"
+            polling_mode = "panic start" if not end_time else "panic end"
             panic = 1
         elif event_type in ["6", "7", "8", "9"]:
             max_value, min_value, average_value, current_value, previous_value = self.extract_values(alarm_description)
