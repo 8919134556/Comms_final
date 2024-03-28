@@ -28,7 +28,7 @@ class CurrentHistoryInsert:
     def current_history_inserting(self, unit_no, lat, lon, device_date_time, driver_id, polling_mode, ignition, speed, direction, gps_module, voltage):
         try:
             previous_data = self.redis_client.hget(unit_no, 'previous_record')
-            if previous_data is None:
+            if previous_data is None or previous_data == "null":
                 previous_data = self.database_manager.previous_records(unit_no)
                 self.redis_client.hset(unit_no, 'previous_record', json.dumps(previous_data))
             else:
